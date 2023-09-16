@@ -1,33 +1,34 @@
+
+PROVIDER = "vmware_desktop"
 Vagrant.configure("2") do |config|
 
-  config.vm.define "mamaurai" do |m|
-    m.vm.box = ""
-    m.vm.hostname = "mamauraiS"
-    m.vm.network "private_network", ip: "192.168.56.110"
-    m.vm.provider "virtualbox" do |d|
-      d.name = "mamaurai"
-      d.memory = "512"
-      d.cpus = "1"
-    end
-    config.vm.provision "shell", inline: <<-SHELL
-    sed -i 's/ChallengeR sponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
-    service ssh restart
-    SHELL
+  # I choosed centos/7 because this version will be maintained until 2024
+  config.vm.box = "centos/7"
+  config.vm.boot_timeout = 1000
+
+  # This configurations is shared between the two next configurations
+  config.vm.provider PROVIDER do |v|
+    v.gui = true
+    v.memory = '1024'
+    v.cpus = '2'
   end
 
-
-  config.vm.define "mamaurai" do |m|
-    m.vm.box = ""
-    m.vm.hostname = "mamauraiSW"
+  MASTER_NAME = "mamauraiS"
+  config.vm.define MASTER_NAME do |m|
+    m.vm.hostname = MASTER_NAME
+    m.vm.network "private_network", ip: "192.168.56.110"
+    # m.vm.provider PROVIDER do |v|
+    #   v.name = MASTER_NAME
+    # end
+  end
+  
+  WORKER_NAME = "mamauraiSW"
+  config.vm.define WORKER_NAME do |m|
+    m.vm.hostname = WORKER_NAME
     m.vm.network "private_network", ip: "192.168.56.111"
-    m.vm.provider "virtualbox" do |d|
-      d.name = "mamaurai"
-      d.memory = "512"
-      d.cpus = "1"
-    end
-    config.vm.provision "shell", inline: <<-SHELL
-    sed -i 's/ChallengeR sponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
-    service ssh restart
-    SHELL
+    #m.vm.provider PROVIDER do |v|
+    #  v.name = WORKER_NAME
+    #end
   end
 end
+  
