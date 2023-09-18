@@ -1,34 +1,57 @@
+# script used :
+# ./scripts/k3s.downloader.all.sh
+# ./scripts/k3s.setup.master.sh
+# ./scripts/k3s.setup.worker.sh
 
 PROVIDER = "vmware_desktop"
 Vagrant.configure("2") do |config|
 
-  # I choosed centos/7 because this version will be maintained until 2024
-  config.vm.box = "centos/7"
-  config.vm.boot_timeout = 1000
+  config.vm.box = "spox/ubuntu-arm"
 
   # This configurations is shared between the two next configurations
   config.vm.provider PROVIDER do |v|
     v.gui = true
-    v.memory = '1024'
-    v.cpus = '2'
+    v.memory = "1024"
+    v.cpus = "2"
   end
 
+  # Install k3s on each VMs
+  config.vm.provision :shell,
+    path: "./scripts/k3s.installer.all.sh",
+    run: "always"
+
   MASTER_NAME = "mamauraiS"
+  MASTER_IP = "192.168.56.110"
   config.vm.define MASTER_NAME do |m|
     m.vm.hostname = MASTER_NAME
-    m.vm.network "private_network", ip: "192.168.56.110"
-    # m.vm.provider PROVIDER do |v|
-    #   v.name = MASTER_NAME
-    # end
+    m.vm.network "private_network", ip: MASTER_IP
+    m.vm.provision :shell,
+      path: "./scripts/k3s.setup.master.sh",
+      run: "always",
+      args: [MASTER_IP, MASTER_NAME]
   end
-  
+
   WORKER_NAME = "mamauraiSW"
+  WORKER_IP = "192.168.56.111"
   config.vm.define WORKER_NAME do |m|
     m.vm.hostname = WORKER_NAME
-    m.vm.network "private_network", ip: "192.168.56.111"
-    #m.vm.provider PROVIDER do |v|
-    #  v.name = WORKER_NAME
-    #end
+    m.vm.network "private_network", ip: WORKER_IP 
+    m.vm.provision :shell,
+      path: "./scripts/k3s.setup.worker.sh",
+      run: "always",
+      args: [WORKER_IP, MASTER_IP]
+  end
+
+  config.trigger.after :up do |t|
+    t.name = "Finished Message"
+    t.info = "Machine is up!"
+  end
+
+  # Remove the agent token when the VM are destroyed
+  config.trigger.before :destroy do |t|
+    t.info = "remove the agent token"
+    t.run = {inline: "rm -rf .agent-token"}
+    t.only_on = MASTER_NAME
   end
 end
   
