@@ -1,11 +1,7 @@
 #!/bin/bash
 
-FILENAME="k3s.setup.worker"
+FILENAME="firewall.disable.all"
 LOGFILE="/var/log/$FILENAME.log"
-ETH_IP=$1
-SERVER_IP=$2
-NAME=$3
-AGENT_TOKEN=$(cat /vagrant/.agent-token)
 
 printf "$FILENAME\n\n"
 
@@ -20,6 +16,7 @@ run() {
 }
 
 run \
-    "nohup /usr/local/bin/k3s agent --server https://${SERVER_IP}:6443 --token ${AGENT_TOKEN} --node-ip ${ETH_IP} --node-name ${NAME} &" \
-    "Running k3s agent in the background..." \
-    "K3s agent has been started in the background."
+    "systemctl disable firewalld --now" \
+    "Disabling firewall..." \
+    "firewall has been disabled."
+

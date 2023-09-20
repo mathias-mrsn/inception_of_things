@@ -1,13 +1,39 @@
-TITLE="K3S DOWNLOADER"
+#!/bin/bash
 
-echo "[${TITLE}] Set timezone to Europe/Paris"
-timedatectl set-timezone Europe/Paris
+FILENAME="k3s.installer.all"
+LOGFILE="/var/log/$FILENAME.log"
+ARCH="arm64"
 
-echo "[${TITLE}] Installation of curl and net-tools (ifconfig)"
-apt install -y curl net-tools >/dev/null 2>&1
+# Header
+printf "$FILENAME\n\n"
 
-echo "[${TITLE}] Download k3s binary"
-curl -Lo /usr/local/bin/k3s https://github.com/k3s-io/k3s/releases/download/v1.27.5+k3s1/k3s-arm64 >/dev/null
-chmod a+x /usr/local/bin/k3s >/dev/null
+run() {
+    echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : $2"
+    eval $1 &> $LOGFILE
+    if [ $? -eq 0 ]; then
+        echo "[$(date +'%m_%d__%H:%M:%S')] SUCCESS : $3"
+    else
+        >&2 echo "[$(date +'%m_%d__%H:%M:%S')] ERROR   : Failed to run the command \"$1\". Check $LOGFILE for details."
+    fi
+}
 
-echo "[${TITLE}] k3s installed"
+run \
+    "timedatectl set-timezone Europe/Paris" \
+    "Setting VM timezone to Europe/Paris..." \
+    "Timezone has been set to Europe/Paris successfully."
+
+run \
+    "yum install -y curl net-tools" \
+    "Downloading/updating packages..." \
+    "Packages have been downloaded/updated successfully."
+
+run \
+    "curl -Lo /usr/local/bin/k3s https://github.com/k3s-io/k3s/releases/download/v1.27.5+k3s1/k3s-$ARCH" \
+    "Downloading k3s binary..." \
+    "K3s binary has been installed successfully."
+
+run \
+    "chmod a+x /usr/local/bin/k3s" \
+    "Changing permissions of /usr/local/bin/k3s binary..." \
+    "Permissions for /usr/local/bin/k3s have been changed."
+
