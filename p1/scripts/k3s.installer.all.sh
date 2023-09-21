@@ -2,14 +2,13 @@
 
 FILENAME="k3s.installer.all"
 LOGFILE="/var/log/$FILENAME.log"
-ARCH="arm64"
 
 # Header
 printf "$FILENAME\n\n"
 
 run() {
     echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : $2"
-    eval $1 &> $LOGFILE
+    eval $1 
     if [ $? -eq 0 ]; then
         echo "[$(date +'%m_%d__%H:%M:%S')] SUCCESS : $3"
     else
@@ -28,7 +27,7 @@ run \
     "Packages have been downloaded/updated successfully."
 
 run \
-    "curl -Lo /usr/local/bin/k3s https://github.com/k3s-io/k3s/releases/download/v1.27.5+k3s1/k3s-$ARCH" \
+    "curl -Lo /usr/local/bin/k3s https://github.com/k3s-io/k3s/releases/download/v1.26.5+k3s1/k3s" \
     "Downloading k3s binary..." \
     "K3s binary has been installed successfully."
 

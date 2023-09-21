@@ -9,7 +9,7 @@ printf "$FILENAME\n\n"
 
 run() {
     echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : $2"
-    eval $1 &> $LOGFILE
+    eval $1 
     if [ $? -eq 0 ]; then
         echo "[$(date +'%m_%d__%H:%M:%S')] SUCCESS : $3"
     else
@@ -27,11 +27,11 @@ run \
     "Running k3s server in the background..." \
     "K3s server has been started in the background."
 
-until /usr/local/bin/k3s kubectl describe node &>/dev/null
-do
-    echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting for k3s to start up..."
+# until /usr/local/bin/k3s kubectl describe node &>/dev/null
+# do
+#     echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting for k3s to start up..."
     sleep 2;
-done
+# done
 
 run \
     "cp /var/lib/rancher/k3s/server/agent-token /vagrant/.agent-token" \

@@ -4,11 +4,11 @@
 # ./scripts/kubectl.installer.all.sh
 # ./scripts/firewall.disable.all.sh
 
-PROVIDER = "vmware_desktop"
+PROVIDER = "virtualbox"
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "bandit145/centos_stream9_arm"
-  config.vm.box_url = "https://app.vagrantup.com/bandit145/boxes/centos_stream9_arm"
+  config.vm.box = "generic/centos8"
+  config.vm.box_url = "https://app.vagrantup.com/generic/boxes/centos8"
 
   #config.ssh.private_key_path = "~/.ssh/id_rsa"
   #config.ssh.forward_agent = true
@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
     v.gui = true
     v.memory = "1024"
     v.cpus = "1"
-    # v.name = "mamaurai"
+    v.name = "mamaurai"
   end
 
   config.vm.provision :shell,

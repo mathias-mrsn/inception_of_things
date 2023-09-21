@@ -2,7 +2,7 @@
 
 FILENAME="kubectl.installer.all"
 LOGFILE="/var/log/$FILENAME.log"
-ARCH="arm64"
+ARCH="amd64"
 
 printf "$FILENAME\n\n"
 
