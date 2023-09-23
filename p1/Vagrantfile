@@ -3,9 +3,19 @@
 # ./scripts/k3s.setup.worker.sh
 # ./scripts/kubectl.installer.all.sh
 # ./scripts/firewall.disable.all.sh
+# ./scripts/ssh.enable.all.sh
+
+VAGRANTFILE_API_VERSION = "2"
+
+cluster = {
+  "master" => { :type => "master", :ip => "192.168.56.110", :name => "mamauraiServer"},
+  "worker1" => { :type => "worker", :ip => "192.168.56.111", :name => "mamauraiServerWorker"},
+}
 
 PROVIDER = "virtualbox"
-Vagrant.configure("2") do |config|
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # GLOBAL CONFIGURATION #
 
   config.vm.box = "generic/centos8"
   config.vm.box_url = "https://app.vagrantup.com/generic/boxes/centos8"
@@ -18,20 +28,24 @@ Vagrant.configure("2") do |config|
     v.cpus = 1
   end
 
-  config.vm.provision :shell,
-    path: "./scripts/k3s.installer.all.sh",
-    run: "always"
+  # SCRIPTS RUNS BY EVERYONE #
 
   config.vm.provision :shell,
-    path: "./scripts/firewall.disable.all.sh",
-    run: "always"
+    path: "./scripts/k3s.installer.all.sh"
 
   config.vm.provision :shell,
-    path: "./scripts/kubectl.installer.all.sh",
-    run: "always"
+    path: "./scripts/firewall.disable.all.sh"
 
-  MASTER_NAME = "mamauraiServer"
-  MASTER_IP = "192.168.56.110"
+  config.vm.provision :shell,
+    path: "./scripts/kubectl.installer.all.sh"
+
+  config.vm.provision :shell,
+    path: "./scripts/ssh.enable.all.sh"
+
+  # MASTER MACHINE #
+
+  MASTER_NAME = "#{cluster["master"][:name]}"
+  MASTER_IP = "#{cluster["master"][:ip]}"
   config.vm.define MASTER_NAME do |m|
     m.vm.hostname = MASTER_NAME
     m.vm.network "private_network", ip: MASTER_IP
@@ -44,36 +58,46 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  WORKER_NAME = "mamauraiServerWorker"
-  WORKER_IP = "192.168.56.111"
-  config.vm.define WORKER_NAME do |m|
-    m.vm.hostname = WORKER_NAME
-    m.vm.network "private_network", ip: WORKER_IP 
-    m.vm.provision :shell,
-      path: "./scripts/k3s.setup.worker.sh",
-      run: "always",
-      args: [WORKER_IP, MASTER_IP, WORKER_NAME]
-    m.vm.provider PROVIDER do |v|
-      v.name = WORKER_NAME
+  # WORKER MACHINES #
+ 
+  cluster.each do |(hostname, machine)|
+    if machine[:type] == "worker"
+      worker_name = "#{machine[:name]}"
+      worker_ip = "#{machine[:ip]}"
+      config.vm.define worker_name do |m|
+        m.vm.hostname = worker_name
+        m.vm.network "private_network", ip: worker_ip 
+        m.vm.provision :shell,
+          path: "./scripts/k3s.setup.worker.sh",
+          run: "always",
+          args: [worker_ip, MASTER_IP, worker_name]
+        m.vm.provider PROVIDER do |v|
+          v.name = worker_name
+        end
+      end
     end
   end
 
-  config.trigger.after :up do |t|
-    t.name = "Finished Message"
-    t.info = "Machine is up!"
-  end
+  # TRIGGERS #
 
-  # Remove the agent token when the VM are destroyed
   config.trigger.before :destroy do |t|
     t.info = "remove the agent token"
     t.run = {inline: "rm -rf .agent-token .log"}
     t.only_on = MASTER_NAME
   end
-  
+ 
   config.trigger.before :up do |t|
     t.info = "create .log directory"
-    t.run = {inline: "mkdir -p ./.log"}
+    t.run = {inline: "mkdir -p ./.log",}
     t.only_on = MASTER_NAME
+  end
+
+  cluster.each do |(hostname, machine)|
+    config.trigger.before :up do |t|
+      t.info = "Cleaning known_host..."
+      t.run = {inline: "bash -c 'ssh-keygen -R #{machine[:ip]} &>/dev/null'"}
+      t.only_on = "#{machine[:name]}"
+    end
   end
 end
   

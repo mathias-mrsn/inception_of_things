@@ -1,5 +1,4 @@
 # Test SSH
-rm -rf ~/.ssh/known_hosts
 ssh vagrant@192.168.56.110
 Password : vagrant
 
