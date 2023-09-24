@@ -24,8 +24,6 @@ run \
     "Setting VM timezone to Europe/Paris..." \
     "Timezone has been set to Europe/Paris successfully."
 
-echo $ARCH
-
 run \
     "yum install -y curl net-tools" \
     "Downloading/updating packages..." \
