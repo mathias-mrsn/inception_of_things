@@ -7,10 +7,10 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
-if `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
+if (`uname -m`.strip() == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0")
   ARCH="arm64"
   PROVIDER = "vmware_desktop"
-elsif `uname -m` == "x86_64"
+elsif (`uname -m`.strip() == "x86_64")
   ARCH="x86_64"
   PROVIDER = "virtualbox"
 end
@@ -89,7 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           args: [worker_ip, MASTER_IP, worker_name]
         if (PROVIDER == "virtualbox")
           m.vm.provider PROVIDER do |v|
-            v.name = MASTER_NAME
+            v.name = worker_name 
           end
         end
       end
@@ -114,6 +114,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.trigger.before :up do |t|
       t.info = "Cleaning known_host..."
       t.run = {inline: "bash -c 'ssh-keygen -R #{machine[:ip]} &>/dev/null'"}
+      t.only_on = "#{machine[:name]}"
+    end
+    
+    config.trigger.after :up do |t|
+      t.info = "#{machine[:name]} is up!"
       t.only_on = "#{machine[:name]}"
     end
   end
