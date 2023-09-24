@@ -1,12 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
+  name: app-ingress
 spec:
   rules:
-  - http:
+  - host: app1.com
+    http:
       paths:
       - path: /
         pathType: Prefix
@@ -15,3 +14,24 @@ spec:
             name: service-app1
             port:
               number: 80
+  - host: app2.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: service-app2
+            port:
+              number: 80
+  # Default route to app3
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: service-app3
+            port:
+              number: 80
+
