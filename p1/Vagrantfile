@@ -7,18 +7,30 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
+if `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
+  ARCH="arm64"
+  PROVIDER = "vmware_desktop"
+elsif `uname -m` == "x86_64"
+  ARCH="x86_64"
+  PROVIDER = "virtualbox"
+end
+
 cluster = {
   "master" => { :type => "master", :ip => "192.168.56.110", :name => "mamauraiServer"},
   "worker1" => { :type => "worker", :ip => "192.168.56.111", :name => "mamauraiServerWorker"},
 }
 
-PROVIDER = "virtualbox"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # GLOBAL CONFIGURATION #
 
-  config.vm.box = "generic/centos8"
-  config.vm.box_url = "https://app.vagrantup.com/generic/boxes/centos8"
+  if ARCH == "arm64"
+    config.vm.box = "bandit145/centos_stream9_arm"
+    config.vm.box_url = "https://app.vagrantup.com/bandit145/boxes/centos_stream9_arm"
+  elsif ARCH == "x86_64"
+    config.vm.box = "generic/centos8"
+    config.vm.box_url = "https://app.vagrantup.com/generic/boxes/centos8"
+  end
 
   config.vm.synced_folder ".", "/vagrant"
 
@@ -29,15 +41,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # SCRIPTS RUNS BY EVERYONE #
-
+  
   config.vm.provision :shell,
-    path: "./scripts/k3s.installer.all.sh"
+    path: "./scripts/k3s.installer.all.sh",
+    env: {"ARCH" => ARCH}
 
   config.vm.provision :shell,
     path: "./scripts/firewall.disable.all.sh"
 
   config.vm.provision :shell,
-    path: "./scripts/kubectl.installer.all.sh"
+    path: "./scripts/kubectl.installer.all.sh",
+    env: {"ARCH" => ARCH}
 
   config.vm.provision :shell,
     path: "./scripts/ssh.enable.all.sh"
@@ -53,13 +67,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       path: "./scripts/k3s.setup.master.sh",
       run: "always",
       args: [MASTER_IP, MASTER_NAME]
-    m.vm.provider PROVIDER do |v|
-      v.name = MASTER_NAME
+    if (PROVIDER == "virtualbox")
+      m.vm.provider PROVIDER do |v|
+        v.name = MASTER_NAME
+      end
     end
   end
 
   # WORKER MACHINES #
- 
+
   cluster.each do |(hostname, machine)|
     if machine[:type] == "worker"
       worker_name = "#{machine[:name]}"
@@ -71,8 +87,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           path: "./scripts/k3s.setup.worker.sh",
           run: "always",
           args: [worker_ip, MASTER_IP, worker_name]
-        m.vm.provider PROVIDER do |v|
-          v.name = worker_name
+        if (PROVIDER == "virtualbox")
+          m.vm.provider PROVIDER do |v|
+            v.name = MASTER_NAME
+          end
         end
       end
     end

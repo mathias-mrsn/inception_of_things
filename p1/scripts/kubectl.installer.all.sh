@@ -1,8 +1,9 @@
 #!/bin/bash
 
+# env : ARCH -> "arm64" or "x86_64"
+
 FILENAME="kubectl.installer.all"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
-ARCH="amd64"
 
 printf "$FILENAME\n\n"
 
@@ -17,10 +18,17 @@ run() {
     fi
 }
 
-run \
-    "curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$ARCH/kubectl" \
-    "Downloading kubectl binary..." \
-    "Kubectl has been successfully installed."
+if [ "$ARCH" == "arm64" ]; then
+    run \
+        "curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl" \
+        "Downloading kubectl binary..." \
+        "Kubectl has been successfully installed."
+else
+    run \
+        "curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+        "Downloading kubectl binary..." \
+        "Kubectl has been successfully installed."
+fi
 
 run \
     "chmod a+x /usr/local/bin/kubectl" \
