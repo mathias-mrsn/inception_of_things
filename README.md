@@ -1,4 +1,6 @@
+# Inception of Things
 
-
-[ ] - Check if node is running
-[ ] - Create script to apply k3s yaml configuration
+## p1 [x]
+## p2 [x]
+## p3 [ ]
+## bonus [ ]
