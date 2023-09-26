@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: gitlab
+  name: gitlab-ingress
+spec:
+  rules:
+    - host: gitlab.mamaurai.com  # Replace with your desired hostname
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gitlab  # The name of your GitLab Service
+                port:
+                  number: 80
