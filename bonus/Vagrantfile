@@ -1,0 +1,110 @@
+# ./scripts/k3s.downloader.all.sh
+# ./scripts/k3s.setup.master.sh
+# ./scripts/k3s.apply.master.sh
+# ./scripts/kubectl.installer.all.sh
+# ./scripts/firewall.disable.all.sh
+# ./scripts/ssh.enable.all.sh
+
+VAGRANTFILE_API_VERSION = "2"
+
+if (`uname -m`.strip() == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0")
+  ARCH="arm64"
+  PROVIDER = "vmware_desktop"
+elsif (`uname -m`.strip() == "x86_64")
+  ARCH="x86_64"
+  PROVIDER = "virtualbox"
+end
+
+cluster = {
+  "master" => { :type => "master", :ip => "192.168.56.110", :name => "mamauraiServer"},
+}
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # GLOBAL CONFIGURATION #
+
+  if ARCH == "arm64"
+    config.vm.box = "bandit145/centos_stream9_arm"
+    config.vm.box_url = "https://app.vagrantup.com/bandit145/boxes/centos_stream9_arm"
+    config.vm.box_version = "20230503032619"
+  elsif ARCH == "x86_64"
+    config.vm.box = "generic/centos8"
+    config.vm.box_url = "https://app.vagrantup.com/generic/boxes/centos8"
+    config.vm.box_version = "4.3.0"
+  end
+
+  config.vm.synced_folder ".", "/vagrant"
+
+  config.vm.provider PROVIDER do |v|
+    v.gui = true
+    v.memory = "2048"
+    v.cpus = 1
+  end
+
+  # SCRIPTS RUNS BY EVERYONE #
+  
+  config.vm.provision :shell,
+    path: "./scripts/k3s.installer.all.sh",
+    env: {"ARCH" => ARCH}
+
+  config.vm.provision :shell,
+    path: "./scripts/firewall.disable.all.sh"
+
+  config.vm.provision :shell,
+    path: "./scripts/kubectl.installer.all.sh",
+    env: {"ARCH" => ARCH}
+
+  config.vm.provision :shell,
+    path: "./scripts/ssh.enable.all.sh"
+
+  # MASTER MACHINE #
+
+  MASTER_NAME = "#{cluster["master"][:name]}"
+  MASTER_IP = "#{cluster["master"][:ip]}"
+  config.vm.define MASTER_NAME do |m|
+    m.vm.hostname = MASTER_NAME
+    m.vm.network "private_network", ip: MASTER_IP
+    m.vm.provision :shell,
+      path: "./scripts/k3s.setup.master.sh",
+      run: "always",
+      args: [MASTER_IP, MASTER_NAME]
+#    m.vm.provision :shell,
+#      path: "./scripts/k3s.apply.master.sh",
+#      run: "always"
+    if (PROVIDER == "virtualbox")
+      m.vm.provider PROVIDER do |v|
+        v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+        v.name = MASTER_NAME
+      end
+    end
+  end
+
+  # TRIGGERS #
+
+  config.trigger.before :destroy do |t|
+    t.info = "remove the agent token"
+    t.run = {inline: "rm -rf .agent-token .log"}
+    t.only_on = MASTER_NAME
+  end
+ 
+  config.trigger.before :up do |t|
+    t.info = "create .log directory"
+    t.run = {inline: "mkdir -p ./.log",}
+    t.only_on = MASTER_NAME
+  end
+
+  cluster.each do |(hostname, machine)|
+    config.trigger.before :up do |t|
+      t.info = "Cleaning known_host..."
+      t.run = {inline: "bash -c 'ssh-keygen -R #{machine[:ip]} &>/dev/null'"}
+      t.only_on = "#{machine[:name]}"
+    end
+    
+    config.trigger.after :up do |t|
+      t.info = "#{machine[:name]} is up!"
+      t.only_on = "#{machine[:name]}"
+    end
+  end
+end
+  

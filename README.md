@@ -4,3 +4,8 @@
 ## p2 [x]
 ## p3 [ ]
 ## bonus [ ]
+
+
+# TODO
+
+[ ] : p2 - Change imagePullPolicy
