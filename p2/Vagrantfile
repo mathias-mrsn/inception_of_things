@@ -1,6 +1,6 @@
 # ./scripts/k3s.downloader.all.sh
 # ./scripts/k3s.setup.master.sh
-# ./scripts/k3s.setup.worker.sh
+# ./scripts/k3s.apply.master.sh
 # ./scripts/kubectl.installer.all.sh
 # ./scripts/firewall.disable.all.sh
 # ./scripts/ssh.enable.all.sh
@@ -71,7 +71,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     m.vm.provision :shell,
       path: "./scripts/k3s.apply.master.sh",
       run: "always"
-#      privileged: false
     if (PROVIDER == "virtualbox")
       m.vm.provider PROVIDER do |v|
         v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
