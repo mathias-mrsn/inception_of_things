@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILENAME="ssh.enable.all"
+FILENAME="ssh.enable"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 
 printf "$FILENAME\n\n"

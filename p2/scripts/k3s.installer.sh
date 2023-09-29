@@ -2,7 +2,7 @@
 
 # env : ARCH -> "arm64" or "x86_64"
 
-FILENAME="k3s.installer.all"
+FILENAME="k3s.installer"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 
 # Header

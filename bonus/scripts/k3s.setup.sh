@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILENAME="k3s.setup.master"
+FILENAME="k3s.setup"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 ETH_IP=$1
 NAME=$2

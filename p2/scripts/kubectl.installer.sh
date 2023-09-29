@@ -2,7 +2,7 @@
 
 # env : ARCH -> "arm64" or "x86_64"
 
-FILENAME="kubectl.installer.all"
+FILENAME="kubectl.installer"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 
 printf "$FILENAME\n\n"

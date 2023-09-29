@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILENAME="k3s.apply.master"
+FILENAME="k3s.apply"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 
 printf "$FILENAME\n\n"

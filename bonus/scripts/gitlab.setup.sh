@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILENAME="gitlab.setup.master"
+FILENAME="gitlab.setup"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 
 printf "$FILENAME\n\n"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILENAME="firewall.disable.all"
+FILENAME="firewall.disable"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
 
 printf "$FILENAME\n\n"
