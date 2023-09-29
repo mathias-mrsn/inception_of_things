@@ -31,12 +31,18 @@ spec:
           mountPath: /var/opt/gitlab/gitlab-rails/shared/registry
         - name: uploads-volume
           mountPath: /var/opt/gitlab/gitlab-rails/uploads
+        - name: config-gitlabrb-volume
+          mountPath: /etc/gitlab/gitlab.rb
+          subPath: gitlab.rb
         ports:
           - name: http-web
             containerPort: 80
           - name: http-reg
             containerPort: 5050
       volumes:
+        - name: config-gitlabrb-volume
+          configMap:
+            name: config-gitlab
         - name: config-volume
           hostPath:
             path: /srv/gitlab/config
