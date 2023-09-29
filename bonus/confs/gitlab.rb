@@ -1,23 +1,16 @@
-external_url 'https://gitlab.apk8s.dev'
+external_url 'https://gitlab.mydomain.com'
 
-nginx['listen_port'] = 80
-nginx['listen_https'] = false
-nginx['proxy_set_headers'] = {
-  'X-Forwarded-Proto' => 'https',
-  'X-Forwarded-Ssl' => 'on'
-}
+postgresql['enable'] = false
 
-gitlab_rails['gitlab_shell_ssh_port'] = 32222
+gitlab_rails['db_adapter'] = 'postgresql'
+gitlab_rails['db_encoding'] = 'utf8'
+gitlab_rails['db_username'] = 'USERNAME'
+gitlab_rails['db_password'] = 'PASSWORD'
+gitlab_rails['db_host'] = '127.0.0.1'
+gitlab_rails['db_port'] = 5432
 
-registry_external_url 'https://reg.gitlab.apk8s.dev'
+web_server['external_users'] = ['www-data']
 
-gitlab_rails['registry_enabled'] = true
+nginx['enable'] = false
+nginx['ssl_prefer_server_ciphers'] = "off"
 
-registry_nginx['listen_port'] = 5050
-registry_nginx['listen_https'] = false
-registry_nginx['proxy_set_headers'] = {
-  'X-Forwarded-Proto' => 'https',
-  'X-Forwarded-Ssl' => 'on'
-}
-
-prometheus['monitor_kubernetes'] = false

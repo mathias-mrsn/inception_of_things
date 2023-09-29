@@ -1,8 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: gitlab
   namespace: gitlab
-  name: gitlab-ingress
+  labels:
+    app: gitlab
+  annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
 spec:
   rules:
   - http:
@@ -14,4 +18,3 @@ spec:
             name: gitlab
             port:
               number: 80
-

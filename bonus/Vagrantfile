@@ -37,8 +37,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider PROVIDER do |v|
     v.gui = true
-    v.memory = "2048"
-    v.cpus = 1
+    v.memory = "4096"
+    v.cpus = 3
   end
 
   # SCRIPTS RUNS BY EVERYONE #
