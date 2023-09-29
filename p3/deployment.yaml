@@ -6,7 +6,7 @@ metadata:
   labels:
     app: xchalle-playground
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: xchalle-playground
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name : xchalle-playground
-        image: wil42/playground:v1
+        image: wil42/playground:v2
         ports:
         - containerPort: 8888
 ---
