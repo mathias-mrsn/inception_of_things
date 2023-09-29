@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:latest #zengxs/gitlab:ee
+        image: gitlab/gitlab-ce:latest #zengxs/gitlab:latest
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: config-volume
