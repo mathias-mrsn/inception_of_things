@@ -29,10 +29,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.synced_folder ".", "/vagrant"
 
+  config.ssh.keep_alive = true
+  config.ssh.forward_agent = true
+
   config.vm.provider PROVIDER do |v|
     v.gui = true
     v.memory = "4096"
-    v.cpus = 3
+    v.cpus = 4
   end
 
   # SCRIPTS RUNS BY EVERYONE #
@@ -64,12 +67,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       args: [MASTER_IP, MASTER_NAME]
     m.vm.provision :shell,
       path: "./scripts/gitlab.setup.sh",
-      run: "always"
+      run: "always",
+      env: {"ARCH" => ARCH}
     if (PROVIDER == "virtualbox")
       m.vm.provider PROVIDER do |v|
         v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-        v.customize ["modifyvm", :id, "--nictype1", "virtio"]
+       # v.customize ["modifyvm", :id, "--nictype1", "virtio"]
         v.name = MASTER_NAME
       end
     end

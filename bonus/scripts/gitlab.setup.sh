@@ -2,7 +2,7 @@
 
 FILENAME="gitlab.setup"
 LOGFILE="/vagrant/.log/$FILENAME.$(hostname).log"
-
+ 
 printf "$FILENAME\n\n"
 
 run() {
@@ -22,8 +22,8 @@ run \
     "Namespace created."
 
 run \
-    "/usr/local/bin/k3s kubectl apply -f /vagrant/confs/gitlab" \
-    "Deploying of gitlab..." \
+    "/usr/local/bin/k3s kubectl apply -f /vagrant/confs/gitlab/$ARCH" \
+    "Deploying of gitlab on $ARCH..." \
     "Gitlab deployed"
 
 
@@ -33,7 +33,7 @@ do
     sleep 5;
 done
 
-while [ $(/bin/curl localhost:80 2>/dev/null | grep "Bad Gateway" | wc -l) == 1 ]
+while [ $(/bin/curl localhost:80 2>/dev/null | grep 'Bad Gateway\|too much time' | wc -l) == 1 ]
 do
     echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting gitlab to be accessible..."
     sleep 5;

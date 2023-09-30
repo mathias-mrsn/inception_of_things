@@ -1,5 +1,1 @@
-# Check pods and service
-k get all
-
-# Curl
-curl -H "Host:app1.com" 192.168.56.110
+# Go to chrome, tap "192.156.56.110", then connect as root with "ThisIsMyPassword42" as password
