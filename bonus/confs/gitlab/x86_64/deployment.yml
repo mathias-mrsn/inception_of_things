@@ -7,7 +7,6 @@ metadata:
     app: gitlab
 spec:
   replicas: 1
-  revisionHistoryLimit: 1
   selector:
     matchLabels:
       app: gitlab
@@ -18,44 +17,34 @@ spec:
     spec:
       containers:
       - name: gitlab
-        image: gitlab/gitlab-ce:latest #zengxs/gitlab:latest
+        image: gitlab/gitlab-ce:latest
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: config-volume
           mountPath: /etc/gitlab
+        - name: config-gitlabrb-volume
+          mountPath: /etc/gitlab/gitlab.rb
+          subPath: gitlab.rb
         - name: logs-volume
           mountPath: /var/log/gitlab
         - name: data-volume
           mountPath: /var/opt/gitlab
-        - name: reg-volume
-          mountPath: /var/opt/gitlab/gitlab-rails/shared/registry
-        - name: uploads-volume
-          mountPath: /var/opt/gitlab/gitlab-rails/uploads
-        - name: config-gitlabrb-volume
-          mountPath: /etc/gitlab/gitlab.rb
-          subPath: gitlab.rb
         ports:
           - name: http-web
             containerPort: 80
           - name: http-reg
             containerPort: 5050
       volumes:
-        - name: config-gitlabrb-volume
-          configMap:
-            name: config-gitlab
         - name: config-volume
           hostPath:
             path: /srv/gitlab/config
+        - name: config-gitlabrb-volume
+          configMap:
+            name: config-gitlab
         - name: logs-volume
           hostPath:
             path: /srv/gitlab/logs
         - name: data-volume
           hostPath:
             path: /srv/gitlab/data
-        - name: reg-volume
-          hostPath:
-            path: /srv/gitlab/reg
-        - name: uploads-volume
-          hostPath:
-            path: /srv/gitlab/uploads
 
