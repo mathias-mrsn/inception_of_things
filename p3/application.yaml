@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-application
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/mathias-mrsn/inception_of_things.git'
+    path: p3
+    targetRevision: xchalle
+    directory:
+      recurse: true
+      jsonnet:
+        tlas:
+          - name: deployment.yaml
+            value: Deployment
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: dev
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
