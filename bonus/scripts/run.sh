@@ -1,5 +1,5 @@
 FILENAME="make"
-ARCH=$(uname -m)
+ARCH="arm64"
 
 printf "$FILENAME\n\n"
 
