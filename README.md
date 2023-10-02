@@ -19,12 +19,15 @@ The sharing of this project on my GitHub aims to help peoples to open their mind
 
 ## 📋 Prerequisites
 
+- Vagrant `v2.3.7`
+- k3d `v5.6.0`
+- k3s `v1.27.5-k3s1`
+
+
 On x86_64 architecture :
-- Vagrant `2.3.7`
 - virtualbox `>= 6.1`
 
 On Apple Silicon / ARM architecture :
-- Vagrant `2.3.7`
 - VMWare Fusion `13.0.2`
 
 ## 🔧 Install
@@ -35,17 +38,21 @@ $ git clone https://github.com/mathias-mrsn/inception_of_things.git
 
 ## 🚀 Usage
 
-For parts p1, p2 and bonus :
+For parts p1, p2:
 ```sh
-$ cd inception_of_things
-$ cd p1 or p2 or bonus (depending on the part you want to launch)
+$ cd inception_of_things/p?
 $ vagrant up
 ```
 
 For part p3 :
 ```sh
-
 ``````
+
+For bonus :
+```sh
+$ cd inception_of_things/bonus
+$ make
+```
 
 ## 👥 Authors
 
