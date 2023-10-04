@@ -1,4 +1,4 @@
-sudo apt install gnome-terminal
+#!/bin/bash
 
 NAMESPACE="argocd"
 
@@ -25,23 +25,31 @@ check_pods_status() {
   done
 }
 
-sudo apt remove docker-desktop
-rm -r $HOME/.docker/desktop
-sudo rm /usr/local/bin/com.docker.cli
-sudo apt purge docker-desktop
+#Install docker
 sudo apt install -y docker.io
+
+#Install kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 rm kubectl
 kubectl version --client
+
+#Install k3d
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-sudo k3d cluster create my-cluster --api-port 6443 --agents 2
+
+#Create the application cluster and connect the host port 8888 to the traefix port (default 80)
+sudo k3d cluster create my-cluster --api-port 6443 --agents 2 -p 8888:80
+
+
 sudo kubectl create namespace argocd
-#sudo kubectl create namespace dev
 sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-#sudo kubectl apply -n dev -f deployment.yaml
-#sudo kubectl port-forward service/xchalle-playground-service -n dev 8888:8888 && sudo kubectl port-forward service/argocd-server -n argocd 8080:443 &
-sudo kubectl apply -n argocd -f ./../confs/application.yaml
-#sudo kubectl wait pod --all --for=condition=Ready
+sudo kubectl apply -n argocd -f ./confs/application.yaml
+
+#Wait for argocd pods to be running...
 check_pods_status
-sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d > ../.password && echo "Argo CD password is in .password file on the root of the part"
+
+
+echo -n "The default Argo CD password is " && sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d > .password && cat .password
+
+#port forward port 443 to port 8080 of the host to access argocd-UI
+sudo kubectl port-forward service/argocd-server -n argocd 8080:443 &
