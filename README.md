@@ -38,19 +38,15 @@ $ git clone https://github.com/mathias-mrsn/inception_of_things.git
 
 ## 🚀 Usage
 
-For parts p1, p2:
+For parts p1 and p2:
 ```sh
-$ cd inception_of_things/p?
+$ cd inception_of_things/...
 $ vagrant up
 ```
 
-For part p3 :
+For part p3 and bonus:
 ```sh
-``````
-
-For bonus :
-```sh
-$ cd inception_of_things/bonus
+$ cd inception_of_things/...
 $ make
 ```
 
