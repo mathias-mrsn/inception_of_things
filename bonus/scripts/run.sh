@@ -1,5 +1,5 @@
 FILENAME="make"
-ARCH="arm64"
+ARCH="$(uname -m)"
 
 printf "$FILENAME\n\n"
 
@@ -37,7 +37,7 @@ if [ $1 == "run" ]; then
        sleep 5;
    done
 
-   while [ $(curl localhost:80 2>/dev/null | grep 'Bad Gateway\|too much time' | wc -l) == 1 ]
+   while (( $(curl localhost:80 2>/dev/null | grep 'Bad Gateway\|too much time' | wc -l) == 1 || $(echo $?) != 0));
    do
        echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting gitlab to be accessible..."
        sleep 5;

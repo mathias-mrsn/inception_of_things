@@ -32,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider PROVIDER do |v|
     v.gui = true
     v.memory = "2048"
-    v.cpus = 1
+    v.cpus = 2
   end
 
   # SCRIPTS RUNS BY EVERYONE #
@@ -69,7 +69,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       m.vm.provider PROVIDER do |v|
         v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-        v.customize ["modifyvm", :id, "--nictype1", "virtio"]
         v.name = MASTER_NAME
       end
     end

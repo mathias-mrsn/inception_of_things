@@ -68,4 +68,9 @@ do
    sleep 5;
 done
 
+while [ $(/bin/curl localhost 2>/dev/null | grep "Hello from" | wc -l ) != 1 ]
+do
+   echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting apps to be accessible..."
+   sleep 5;
+done
 
