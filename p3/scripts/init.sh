@@ -49,7 +49,7 @@ sudo kubectl apply -n argocd -f ./confs/application.yaml
 check_pods_status
 
 
-echo -n "The default Argo CD password is " && sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d > .password && cat .password
+echo -n "The default Argo CD password is " && sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | tee .password
 
 #port forward port 443 to port 8080 of the host to access argocd-UI
 sudo kubectl port-forward service/argocd-server -n argocd 8080:443 &
