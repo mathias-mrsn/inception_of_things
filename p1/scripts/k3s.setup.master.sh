@@ -28,7 +28,7 @@ run \
     "Running k3s server in the background..." \
     "K3s server has been started in the background."
 
-while [ $(/usr/local/bin/k3s kubectl get nodes 2>>$LOGFILE | grep "Ready" | wc -l) != 1 ]
+while [ $(/usr/local/bin/k3s kubectl get nodes 2>>$LOGFILE | grep " Ready " | wc -l) != 1 ]
 do
    echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting for k3s to start up..."
    sleep 3;
