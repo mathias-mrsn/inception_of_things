@@ -46,6 +46,8 @@ $ vagrant up
 
 For part p3 :
 ```sh
+$ cd inception_of_things/p3
+$ make
 ``````
 
 For bonus :
