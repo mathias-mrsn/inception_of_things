@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argo-application
-  namespace: argocd
+  name: gitlab-application
+  namespace: argocd 
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/mathias-mrsn/inception_of_things.git'
-    path: p3
-    targetRevision: xchalle
+    repoURL: 'http://192.168.0.30:80/root/xchalle_appconf.git'
+    path: dev
+    targetRevision: HEAD
     directory:
       recurse: true
       jsonnet:
@@ -17,7 +17,7 @@ spec:
             value: Deployment
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: dev
+    namespace: gitlab
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

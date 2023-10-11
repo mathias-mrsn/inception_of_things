@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-application
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/xchalle/xchalle_appconf.git'
+    path: dev
+    targetRevision: HEAD
+    directory:
+      recurse: true
+      jsonnet:
+        tlas:
+          - name: deployment.yaml
+            value: Deployment
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: dev
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
