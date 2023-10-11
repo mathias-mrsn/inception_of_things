@@ -54,6 +54,7 @@ For bonus :
 ```sh
 $ cd inception_of_things/bonus
 $ make
+$ cd scripts && sh test.sh <HOST_IP>
 ```
 
 ## 👥 Authors
