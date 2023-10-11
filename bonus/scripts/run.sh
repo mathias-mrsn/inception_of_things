@@ -1,7 +1,8 @@
 FILENAME="make"
 ARCH="$(uname -m)"
+GITLAB_ACCESS_TOKEN="$(xxd -p /dev/urandom | head -c 32)"
 
-printf "$FILENAME\n\n"
+printf "$FILENAME $1:\n\n"
 
 run() {
     echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : $2"
@@ -14,6 +15,7 @@ run() {
 }
 
 if [ $1 == "run" ]; then
+
 
    run \
        "k3d cluster create gitlab --port 80:80" \
@@ -43,6 +45,22 @@ if [ $1 == "run" ]; then
        sleep 5;
    done
 
+   run \
+       "mkdir -p /etc/gitlab" \
+       "Creating of gitlab directory..." \
+       "Gitlab directory generated."
+
+   run \
+       "sh -c 'printf "$GITLAB_ACCESS_TOKEN" > /etc/gitlab/.gitlab_access_token'" \
+       "Generating access token..." \
+       "Access token generated."
+
+   POD_ID="$(sudo kubectl get pods -n gitlab | grep "gitlab" | awk '{print $1}')"
+
+   run \
+       "kubectl exec ${POD_ID} -n gitlab -- gitlab-rails runner \"token = User.find_by_username('root').personal_access_tokens.create(scopes: ['api', 'read_api'], name: 'root token', expires_at: 365.days.from_now); token.set_token('$GITLAB_ACCESS_TOKEN'); token.save\"" \
+       'Generating token access...' \
+       'Token access generated.'
 
 elif [ $1 == "clean" ]; then
     

@@ -11,3 +11,5 @@ data:
     gitlab_rails['env'] = {
       'GITLAB_RAILS_RACK_TIMEOUT' => 600
     }
+    gitlab_rails['api_request_limit'] = false
+    gitlab_rails['throttle_authenticated_api'] = false
