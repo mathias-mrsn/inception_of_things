@@ -16,6 +16,7 @@ run() {
 
 if [ $1 == "run" ]; then
 
+
    run \
        "k3d cluster create gitlab --port 80:80" \
        "Creating gitlab cluster..." \
