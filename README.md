@@ -44,10 +44,16 @@ $ cd inception_of_things/...
 $ vagrant up
 ```
 
-For part p3 and bonus:
+For part p3:
 ```sh
 $ cd inception_of_things/...
 $ make
+``````
+
+For bonus :
+```sh
+$ cd inception_of_things/.../scripts
+$ sh test <HOST_IP>
 ```
 
 ## 👥 Authors

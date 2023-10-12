@@ -6,8 +6,7 @@ metadata:
 spec:
   project: default
   source:
-          #repoURL: 'http://172.19.0.1/root/xchalle_appconf'
-    repoURL: 'http://root:ThisIsMyPassword42@192.168.0.30:80/root/xchalle_appconf.git'
+    repoURL: 'http://192.168.0.30:80/root/xchalle_appconf.git'
     path: dev
     targetRevision: HEAD
     directory:

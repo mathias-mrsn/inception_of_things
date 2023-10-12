@@ -2,6 +2,11 @@
 
 NAMESPACE="argocd"
 
+RED='\e[31m'    # Red text
+GREEN='\e[32m'  # Green text
+BLUE='\e[34m'   # Blue text
+RESET='\e[0m'   # Reset text color to default
+
 # Function to check if all pods are in the "Running" state
 check_pods_status() {
   while true; do
@@ -16,10 +21,10 @@ check_pods_status() {
 
     # Check if all pods are in the "Running" state
     if [ "$num_running_pods" -eq "$total_pods" ]; then
-      echo "All pods in '$NAMESPACE' are in the 'Running' state."
+      echo -e "All pods in '$NAMESPACE' are in the '${GREEN}Running${RESET}' state."
       break
     else
-      echo "Waiting for all pods in '$NAMESPACE' to be in the 'Running' state ($num_running_pods/$total_pods)..."
+      echo -e "Waiting for all pods in '$NAMESPACE' to be in the '${GREEN}Running${RESET}' state ($num_running_pods/$total_pods)..."
       sleep 5  # Adjust the sleep interval as needed
     fi
   done
@@ -49,7 +54,11 @@ sudo kubectl apply -n argocd -f ./confs/application.yaml
 check_pods_status
 
 
-echo -n "The default Argo CD password is " && sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | tee .password
 
 #port forward port 443 to port 8080 of the host to access argocd-UI
-sudo kubectl port-forward service/argocd-server -n argocd 8080:443 &
+sudo kubectl port-forward service/argocd-server -n argocd 8080:443 > /dev/null 2>&1 &
+
+echo -n -e "The default Argo CD password is ${RED}" && sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | tee .password
+echo -e "${RESET}, you can find it in the .password file at the root of this part"
+echo -e "${GREEN}ArgoCD-UI -> https://localhost:8080"
+echo -e "${BLUE}Application -> http://localhost:8888"
