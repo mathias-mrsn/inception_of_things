@@ -39,6 +39,11 @@ if [ $1 == "run" ]; then
        sleep 5;
    done
 
+   run \
+       "sleep 5" \
+       "Gitlab pod is running. Waiting before checking its accessibility..." \
+       "Checking if gitlab is accessible..."
+
    while (( $(curl localhost:80 2>/dev/null | grep 'Bad Gateway\|too much time' | wc -l) == 1 || $(echo $?) != 0));
    do
        echo "[$(date +'%m_%d__%H:%M:%S')] INFO    : Waiting gitlab to be accessible..."
