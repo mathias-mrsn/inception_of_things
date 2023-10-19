@@ -22,7 +22,7 @@ The sharing of this project on my GitHub aims to help peoples to open their mind
 - Vagrant `v2.3.7`
 - k3d `v5.6.0`
 - k3s `v1.27.5-k3s1`
-
+- docker.io
 
 On x86_64 architecture :
 - virtualbox `>= 6.1`

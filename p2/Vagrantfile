@@ -55,7 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   MASTER_NAME = "mamauraiServer"
   MASTER_IP = "192.168.56.110"
-  config.vm.define MASTER_NAME do |m|
+  config.vm.define MASTER_NAME, primary: true do |m|
     m.vm.hostname = MASTER_NAME
     m.vm.network "private_network", ip: MASTER_IP
     m.vm.provision :shell,

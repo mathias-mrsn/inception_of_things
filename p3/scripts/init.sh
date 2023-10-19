@@ -30,18 +30,6 @@ check_pods_status() {
   done
 }
 
-#Install docker
-sudo apt install -y docker.io
-
-#Install kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-rm kubectl
-kubectl version --client
-
-#Install k3d
-curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-
 #Create the application cluster and connect the host port 8888 to the traefix port (default 80)
 sudo k3d cluster create my-cluster --api-port 6443 --agents 2 -p 8888:80
 
