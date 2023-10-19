@@ -52,8 +52,9 @@ $ make
 
 For bonus :
 ```sh
-$ cd inception_of_things/.../scripts
-$ sh test <HOST_IP>
+$ cd inception_of_things/bonus
+$ make
+$ make test
 ```
 
 ## 👥 Authors
